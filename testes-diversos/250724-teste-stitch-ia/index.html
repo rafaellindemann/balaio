@@ -1,0 +1,153 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
+    />
+
+    <title>Stitch Design</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body>
+    <div class="relative flex size-full min-h-screen flex-col bg-[#181411] dark group/design-root overflow-x-hidden" style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'>
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#393028] px-10 py-3">
+          <div class="flex items-center gap-4 text-white">
+            <div class="size-4">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+            </div>
+            <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Dino Store</h2>
+          </div>
+          <div class="flex flex-1 justify-end gap-8">
+            <div class="flex items-center gap-9">
+              <a class="text-white text-sm font-medium leading-normal" href="#">Home</a>
+              <a class="text-white text-sm font-medium leading-normal" href="#">Dinosaurs</a>
+              <a class="text-white text-sm font-medium leading-normal" href="#">About Us</a>
+              <a class="text-white text-sm font-medium leading-normal" href="#">Contact</a>
+            </div>
+            <div class="flex gap-2">
+              <button
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#393028] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+              >
+                <span class="truncate">Cart</span>
+              </button>
+              <button
+                class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#393028] text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+              >
+                <div class="text-white" data-icon="MagnifyingGlass" data-size="20px" data-weight="regular">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                    <path
+                      d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                    ></path>
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+        </header>
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <h1 class="text-white tracking-light text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">Explore Our Collection</h1>
+            <div class="flex overflow-y-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+              <div class="flex items-stretch p-4 gap-3">
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCtnQOa5HxIRkwz6CsFNwUJ0vJoF0HtSPFT_C9bV2_9mAU8V3ujc4JdvlpBQndzPgBJ0QTkAVMUSe3089M_wWJcXWfmfNnBo_cB8LTyfd5WEnjZi_EpTK0HJCnZ3Bg-yIfiQijs9YBBUVsM-PQ3uPUjv__S-7Lfz9jYFf5Y4Uwmzfe9sw-nblEfXTZ9KXtfczSpxgSaKqFhyH7nX9eymoWBzwogy3FVpL0tb_3BTFJwMKwEuQIN_OGca1DS1TTPIgcRiCxui9an9Jc");'
+                  ></div>
+                  <div>
+                    <p class="text-white text-base font-medium leading-normal">Tyrannosaurus Rex</p>
+                    <p class="text-[#baa99c] text-sm font-normal leading-normal">Apex predator</p>
+                  </div>
+                </div>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDJqa_QkuUisHIPM6jc0YD6of1KTrmVh_2u5uuO9FgbDZU5JhEUzmEsTQ330Qbw_kjGj4p63ry0Ve3ndFc_4Iri025QiGNcScLo3QH_AcPsq_vj-Cu6ZruMBcNrn5OlPmjri7bgLk-iUN2IFGn0fspDuYQd6urCS5HkRdv6TDGFwgAs3lEW7GpQr4BXXmNBEd47pmQJYXEYhEhuddI_P8H53Q2fccvzAptVeaTsy-rIldgJkdk7-c5BtMfxaOWmIXwPF3_0XhcsORc");'
+                  ></div>
+                  <div>
+                    <p class="text-white text-base font-medium leading-normal">Triceratops</p>
+                    <p class="text-[#baa99c] text-sm font-normal leading-normal">Herbivore with horns</p>
+                  </div>
+                </div>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCJYxGdXR9FYjdxS3wFm7be4UMK8bEBSGy_CZzoT-F6by8ricEInHtYrKRLh7rf1splROT9i0tR-8qW5Dy2bxmqjtrKva5PX-RX8ad0Bp2m8ZXQ2-PKZDZm_7wl59DnHbAWQWjSx5LgpTVMqFK39SJ58IjSd1Rx4dsPE6TT_nx7W3cSaew97pCMvY4ZQLAm_fReo85RN2oCdK01r0hAz019p_-pCmTNS5cL5U01DLdjui0a80y4naaashbGbLgNvOmBSHwjwtmyU_g");'
+                  ></div>
+                  <div>
+                    <p class="text-white text-base font-medium leading-normal">Stegosaurus</p>
+                    <p class="text-[#baa99c] text-sm font-normal leading-normal">Plated herbivore</p>
+                  </div>
+                </div>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQNv8WATdYc-s0Gsa6WM62CDhp4tOBzn3A0VNVqpX8v3TW22ABn1CswKXmyWvFHSUPQdaY-W4dy1NG-AvLeT5RwOpREm2E3qxz0MO4R8XGs8MbcySCO3ko9HY3-J_A2z5SPI4vG5B6SYQM1cc6bA4PwAadP2jNAlAsrEKKDaKdNIvbJwc0cHinG-GepGionKW9IRo8MmDnMa7B_UnHDNRHIwAV6af77_AGNqVce8qpaLuhT8dZpmJHJ4lkF1gj9CeQ5zFlSxBz2b4");'
+                  ></div>
+                  <div>
+                    <p class="text-white text-base font-medium leading-normal">Velociraptor</p>
+                    <p class="text-[#baa99c] text-sm font-normal leading-normal">Agile hunter</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Featured Dinosaurs</h2>
+            <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
+              <div class="flex flex-col gap-3 pb-3">
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCEyyjJv9jS8HYGGMD0KUwEb62J8doN_QvTunDy-yiiSj1sPEASl5aG8yuI8L5S_xLxvpPi5cc8l98TtAdg5JnQreyfuRlX8xPEraK_6ySb7VHuAqsBfPwE_FA8eZxzcZtMiLpvUVELciHqdTjCisQU1hEzQYr_ZX9wtKgi0QvDXatMqBpajGLtAmX8nN2TptQziaSvTSgoHgZx_H8A12KbIQnMioT8BpyfFycV_VdRgSRPvF2plgs3HA4vkLMKdCmlU5t1_WYRkdU");'
+                ></div>
+                <div>
+                  <p class="text-white text-base font-medium leading-normal">Brachiosaurus</p>
+                  <p class="text-[#baa99c] text-sm font-normal leading-normal">Giant herbivore</p>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3 pb-3">
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCo9T-cky26P4R2LGJ45hKePa4SDi_ogetTGUYWTQGbEy2PlhcoU4hrIFKx5lANDRN4G1APjXY7IVCk4S73_fBqb6pcd14I5oeC0b4P8NGZa4sydZieYSXrcJvRQnaSg7LiEnactlY53wjkof2i3VzglVoZ7SkUgvNQryQQjC15MEIXqdsEBulwnsBbag_tMjnpzNnFCTfKdrJkBMlnxUt0HGnGr-c43RzmsYZdeCVvN-YA5JC19g5YXWSIr5B-v9IjJ0ie3hnIhLw");'
+                ></div>
+                <div>
+                  <p class="text-white text-base font-medium leading-normal">Ankylosaurus</p>
+                  <p class="text-[#baa99c] text-sm font-normal leading-normal">Armored herbivore</p>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3 pb-3">
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD0QnoMPnDWXHCEoJVTSL31wJWD-Gnx1vVdPcVt6LDhZbctdgo7oiwBNZHn8wZLBvrkXukWNa2CWdLGpFQ5p8_rbgqSsRXeeAuZFWo98Ry9gEFC6b3IlxiY7kTk7PW4W904qGx6wrupn9baVUH-nHMDfdZ95xMzbW6MOZ9acqFqHl3OaZoj-sJJ5gtez7n8cZI_XXz1lPzOnsZcL5p1PCwM2EOR4fuAjSyfRbkL-lL7tRl4vTZ0I3fuyu3v7nrcLb2TRHj-YxXmnIs");'
+                ></div>
+                <div>
+                  <p class="text-white text-base font-medium leading-normal">Pteranodon</p>
+                  <p class="text-[#baa99c] text-sm font-normal leading-normal">Flying reptile</p>
+                </div>
+              </div>
+              <div class="flex flex-col gap-3 pb-3">
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBnmABH91D2pH72wqALw1gbxXY7Rd-15J4ryhOxrt3_UFkE7aEeEenn97mkdefzjZqebqv79VKNvcW3st2XYczdhBuAUL3i52zbh3qRVz9OoEzESJ2MYvGx3LAJcPqNv9aJY5Iu9zVhXC68WVd7SiyrbatTlTMMabEAp_ZmftSEk_RebpT5JusiY06lbGHPB8UhK_6SVWmA4cH7vnEXAmSnj_8iGLUj4Y12pj1T8gL-uVN2G6xg2y5h__l_k36TBLvPtZ2qs7HgeXo");'
+                ></div>
+                <div>
+                  <p class="text-white text-base font-medium leading-normal">Spinosaurus</p>
+                  <p class="text-[#baa99c] text-sm font-normal leading-normal">Aquatic predator</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
