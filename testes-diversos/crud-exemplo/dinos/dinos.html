@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRUD Dinossauros ARK — Vanilla JS + LocalStorage</title>
+  <style>
+    :root{
+      --bg:#0f172a;        /* slate-900 */
+      --panel:#111827;     /* gray-900 */
+      --muted:#94a3b8;     /* slate-400 */
+      --text:#e5e7eb;      /* gray-200 */
+      --pri:#60a5fa;       /* blue-400 */
+      --pri-2:#38bdf8;     /* sky-400 */
+      --acc:#22c55e;       /* green-500 */
+      --warn:#f59e0b;      /* amber-500 */
+      --danger:#ef4444;    /* red-500 */
+      --card:#0b1224;      /* darker */
+      --chip:#1f2937;      /* gray-800 */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:linear-gradient(160deg,#0b1022 0%, #0f172a 60%, #111827 100%); color:var(--text);
+    }
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter: blur(10px);
+      background:rgba(10,14,28,.6); border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav{max-width:1100px; margin:auto; display:flex; align-items:center; gap:14px; padding:10px 16px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.5px}
+    .brand .logo{width:34px; height:34px; border-radius:10px; background: radial-gradient(120% 120% at 10% 10%, var(--pri-2), transparent 40%), radial-gradient(120% 120% at 90% 90%, var(--pri), transparent 40%), linear-gradient(135deg,#15203b,#0a0f20); box-shadow: var(--shadow)}
+    .nav a{color:var(--text); text-decoration:none; padding:10px 12px; border-radius:12px; opacity:.9}
+    .nav a.active{background:rgba(255,255,255,.06)}
+    .nav .spacer{flex:1}
+    .btn{appearance:none; border:0; background:linear-gradient(135deg,var(--pri),var(--pri-2)); color:white; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; box-shadow: var(--shadow)}
+    .btn.secondary{background:#1f2937}
+    .btn.warn{background:var(--warn)}
+    .btn.danger{background:var(--danger)}
+    .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,.1)}
+
+    main{max-width:1100px; margin:20px auto; padding:0 16px}
+    .panel{background:linear-gradient(180deg,#0e142a,#0a0f20); border:1px solid rgba(255,255,255,.06); padding:18px; border-radius:var(--radius); box-shadow: var(--shadow)}
+    h1{font-size:24px; margin:10px 0 6px}
+    h2{font-size:20px; margin:20px 0 10px}
+    p.muted{color:var(--muted)}
+
+    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:16px}
+    .col-3{grid-column: span 3}
+    .col-4{grid-column: span 4}
+    .col-6{grid-column: span 6}
+    .col-8{grid-column: span 8}
+    .col-12{grid-column: span 12}
+    @media (max-width:900px){
+      .col-3,.col-4,.col-6,.col-8{grid-column:span 12}
+      .nav{flex-wrap:wrap}
+    }
+
+    .kpi{display:flex; align-items:flex-start; gap:12px; padding:14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:14px}
+    .kpi .val{font-size:24px; font-weight:800}
+    .kpi .lbl{font-size:12px; color:var(--muted)}
+
+    .chip{display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:6px 10px; border-radius:999px; background:var(--chip); border:1px solid rgba(255,255,255,.08)}
+
+    .toolbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px}
+    .input,select{background:#0c1225; color:var(--text); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px; outline:none; min-width:0}
+    .input::placeholder{color:#74809c}
+    .field{display:flex; flex-direction:column; gap:6px}
+    .field label{font-size:12px; color:var(--muted)}
+    form .grid .panel{padding:14px}
+
+    .card{background:linear-gradient(180deg,#0d142a,#0a0f21); border:1px solid rgba(255,255,255,.06); border-radius:14px; overflow:hidden; box-shadow: var(--shadow); display:flex; flex-direction:column}
+    .card img{width:100%; aspect-ratio: 16/10; object-fit:cover; background:#0a1020}
+    .card .body{padding:12px; display:flex; flex-direction:column; gap:8px}
+    .card .title{font-weight:800; display:flex; justify-content:space-between; gap:8px}
+    .card .meta{display:flex; gap:8px; flex-wrap:wrap}
+    .actions{display:flex; gap:8px; margin-top:auto}
+
+    table{width:100%; border-collapse:separate; border-spacing:0}
+    th,td{padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.06); text-align:left}
+    th{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+    tr:hover td{background:rgba(255,255,255,.02)}
+
+    .footer{opacity:.6; text-align:center; padding:12px; font-size:12px}
+    .hide{display:none!important}
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <div class="brand"><div class="logo"></div> CRUD ARK Dinos</div>
+      <a href="#/dashboard" data-link>Dashboard</a>
+      <a href="#/cards" data-link>Cards</a>
+      <a href="#/table" data-link>Tabela</a>
+      <a href="#/form" data-link>Novo</a>
+      <div class="spacer"></div>
+      <button class="btn ghost" id="btnExport">Exportar JSON</button>
+      <input id="importInput" type="file" accept="application/json" class="hide" />
+      <button class="btn ghost" id="btnImport">Importar JSON</button>
+      <button class="btn secondary" id="btnSeed">Seed</button>
+      <button class="btn danger" id="btnReset">Reset</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="panel">
+      <h1>Dashboard</h1>
+      <p class="muted">Visão geral do estoque de dinossauros (LocalStorage).</p>
+      <div class="grid" id="kpiGrid">
+        <!-- KPIs preenchidos via JS -->
+      </div>
+      <h2>Listas rápidas</h2>
+      <div class="grid">
+        <div class="col-6">
+          <div class="panel" id="topEstoque"><h3>Maiores estoques</h3><div class="muted">—</div></div>
+        </div>
+        <div class="col-6">
+          <div class="panel" id="lowEstoque"><h3>Menores estoques</h3><div class="muted">—</div></div>
+        </div>
+        <div class="col-6">
+          <div class="panel" id="onlyMacho"><h3>Só Macho</h3><div class="muted">—</div></div>
+        </div>
+        <div class="col-6">
+          <div class="panel" id="onlyFemea"><h3>Só Fêmea</h3><div class="muted">—</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARDS -->
+    <section id="view-cards" class="panel hide">
+      <div class="toolbar">
+        <input class="input" id="qCards" placeholder="Pesquisar por nome..." />
+        <select id="sortCards">
+          <option value="nome-asc">Nome (A→Z)</option>
+          <option value="nome-desc">Nome (Z→A)</option>
+          <option value="level-desc">Level (maior)</option>
+          <option value="level-asc">Level (menor)</option>
+          <option value="quantidade-desc">Quantidade (maior)</option>
+          <option value="quantidade-asc">Quantidade (menor)</option>
+        </select>
+        <input class="input" id="minLevel" type="number" placeholder="Level mín" min="0" />
+        <input class="input" id="maxLevel" type="number" placeholder="Level máx" min="0" />
+        <label class="chip"><input type="checkbox" id="fltMacho"/> Macho</label>
+        <label class="chip"><input type="checkbox" id="fltFemea"/> Fêmea</label>
+        <button class="btn" id="btnAddFromCards">Novo Dino</button>
+      </div>
+      <div class="grid" id="cardsGrid" style="grid-template-columns: repeat(auto-fill,minmax(240px,1fr));"></div>
+    </section>
+
+    <!-- TABELA -->
+    <section id="view-table" class="panel hide">
+      <div class="toolbar">
+        <input class="input" id="qTable" placeholder="Pesquisar por nome..." />
+        <select id="sortTable">
+          <option value="nome-asc">Nome (A→Z)</option>
+          <option value="level-desc">Level (maior)</option>
+          <option value="quantidade-desc">Quantidade (maior)</option>
+          <option value="preco-desc">Preço (maior)</option>
+        </select>
+        <button class="btn" id="btnAddFromTable">Novo Dino</button>
+      </div>
+      <div class="panel" style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Level</th>
+              <th>Qtd</th>
+              <th>Preço</th>
+              <th>Vida</th>
+              <th>Estamina</th>
+              <th>Peso</th>
+              <th>Comida</th>
+              <th>Oxigênio</th>
+              <th>Dano</th>
+              <th>Veloc.</th>
+              <th>Macho</th>
+              <th>Fêmea</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FORM -->
+    <section id="view-form" class="panel hide">
+      <h1 id="formTitle">Novo Dinossauro</h1>
+      <form id="dinoForm">
+        <input type="hidden" id="id" />
+        <div class="grid">
+          <div class="col-8">
+            <div class="panel">
+              <div class="grid">
+                <div class="col-12 field"><label>Nome*</label><input id="nome" class="input" required placeholder="Ex: Rex Alpha" /></div>
+                <div class="col-12 field"><label>URL da Imagem</label><input id="imagem" class="input" placeholder="https://..." /></div>
+                <div class="col-4 field"><label>Level*</label><input id="level" class="input" type="number" min="0" required /></div>
+                <div class="col-4 field"><label>Quantidade*</label><input id="quantidade" class="input" type="number" min="0" required /></div>
+                <div class="col-4 field"><label>Preço (unidade)*</label><input id="preco" class="input" type="number" min="0" required /></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="panel">
+              <div class="grid">
+                <div class="col-6 field"><label>Vida</label><input id="vida" class="input" type="number" min="0" value="0" /></div>
+                <div class="col-6 field"><label>Estamina</label><input id="estamina" class="input" type="number" min="0" value="0" /></div>
+                <div class="col-6 field"><label>Peso</label><input id="peso" class="input" type="number" min="0" value="0" /></div>
+                <div class="col-6 field"><label>Comida</label><input id="comida" class="input" type="number" min="0" value="0" /></div>
+                <div class="col-6 field"><label>Oxigênio</label><input id="oxigenio" class="input" type="number" min="0" value="0" /></div>
+                <div class="col-6 field"><label>Dano</label><input id="dano" class="input" type="number" min="0" value="0" /></div>
+                <div class="col-6 field"><label>Velocidade</label><input id="velocidade" class="input" type="number" min="0" value="0" /></div>
+                <div class="col-6 field" style="display:flex; align-items:center; gap:10px; margin-top:24px">
+                  <label class="chip"><input type="checkbox" id="macho"/> Macho</label>
+                  <label class="chip"><input type="checkbox" id="femea"/> Fêmea</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12" style="display:flex; gap:8px">
+            <button class="btn" type="submit">Salvar</button>
+            <button class="btn ghost" type="button" id="btnCancel">Cancelar</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <div class="footer">Feito com ❤️ em Vanilla JS • Persistência: LocalStorage</div>
+  </main>
+
+  <script>
+    // ====== UTIL & STORAGE ======
+    const LS_KEY = 'asa_dinos';
+    const ID_KEY = 'asa_last_id';
+
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+
+    function readAll(){
+      const raw = localStorage.getItem(LS_KEY);
+      try{ return raw ? JSON.parse(raw) : []; }catch{ return []; }
+    }
+    function writeAll(arr){ localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+    function nextId(){ const n = parseInt(localStorage.getItem(ID_KEY)||'0',10)+1; localStorage.setItem(ID_KEY,n); return n; }
+
+    function upsert(dino){
+      const data = readAll();
+      if(!dino.id){ dino.id = nextId(); dino.createdAt = Date.now(); }
+      dino.updatedAt = Date.now();
+      const idx = data.findIndex(x=>x.id===dino.id);
+      if(idx>=0) data[idx]=dino; else data.push(dino);
+      writeAll(data); return dino.id;
+    }
+    function remove(id){ writeAll(readAll().filter(x=>x.id!==id)); }
+    function findById(id){ return readAll().find(x=>x.id===id); }
+
+    // ====== ROUTER ======
+    const routes = ['#/dashboard','#/cards','#/table','#/form'];
+    function setActive(link){
+      $$('a[data-link]').forEach(a=>a.classList.toggle('active', a.getAttribute('href')===link));
+    }
+    function navTo(hash){
+      const v = hash || '#/dashboard';
+      setActive(v);
+      $('#view-dashboard').classList.add('hide');
+      $('#view-cards').classList.add('hide');
+      $('#view-table').classList.add('hide');
+      $('#view-form').classList.add('hide');
+      if(v.startsWith('#/dashboard')){ $('#view-dashboard').classList.remove('hide'); renderDashboard(); }
+      if(v.startsWith('#/cards')){ $('#view-cards').classList.remove('hide'); renderCards(); }
+      if(v.startsWith('#/table')){ $('#view-table').classList.remove('hide'); renderTable(); }
+      if(v.startsWith('#/form')){ $('#view-form').classList.remove('hide'); setupForm(); }
+      location.hash = v;
+    }
+    window.addEventListener('hashchange', ()=> navTo(location.hash));
+
+    // ====== SEED ======
+    function seed(){
+      const sample = [
+        {nome:'Rex', imagem:'./imgs/dino.png', level:145, vida:8000, estamina:1200, peso:750, comida:5000, oxigenio:150, dano:400, velocidade:100, quantidade:3, preco:12000, macho:true, femea:false},
+        {nome:'Argentavis', imagem:'./imgs/dino.png', level:90, vida:2000, estamina:1500, peso:600, comida:3000, oxigenio:200, dano:150, velocidade:120, quantidade:8, preco:6000, macho:false, femea:true},
+        {nome:'Doedicurus', imagem:'./imgs/dino.png', level:60, vida:1500, estamina:800, peso:400, comida:2500, oxigenio:100, dano:90, velocidade:95, quantidade:2, preco:3500, macho:true, femea:true},
+        {nome:'Therizino', imagem:'./imgs/dino.png', level:130, vida:5000, estamina:1100, peso:450, comida:4200, oxigenio:120, dano:320, velocidade:105, quantidade:1, preco:15000, macho:false, femea:true},
+        {nome:'Ankylo', imagem:'./imgs/dino.png', level:100, vida:2800, estamina:900, peso:800, comida:3800, oxigenio:100, dano:110, velocidade:90, quantidade:5, preco:7000, macho:true, femea:false}
+      ].map(x=>({id:nextId(), createdAt:Date.now(), updatedAt:Date.now(), ...x}));
+      writeAll(sample);
+    }
+
+    // ====== CARDS RENDER ======
+    function renderCards(){
+      const q = ($('#qCards').value||'').toLowerCase();
+      const minL = parseInt($('#minLevel').value||'0',10);
+      const maxL = parseInt($('#maxLevel').value||'999999',10);
+      const wantM = $('#fltMacho').checked; const wantF = $('#fltFemea').checked;
+      const sort = $('#sortCards').value;
+      let items = readAll();
+      items = items.filter(x => x.nome.toLowerCase().includes(q));
+      items = items.filter(x => x.level>=minL && x.level<=maxL);
+      if(wantM && !wantF) items = items.filter(x=> !!x.macho);
+      if(wantF && !wantM) items = items.filter(x=> !!x.femea);
+      items.sort((a,b)=>{
+        const [field,dir] = sort.split('-');
+        const av = (field==='nome')? a.nome.toLowerCase() : a[field];
+        const bv = (field==='nome')? b.nome.toLowerCase() : b[field];
+        if(av<bv) return dir==='asc'?-1:1; if(av>bv) return dir==='asc'?1:-1; return 0;
+      });
+      const grid = $('#cardsGrid'); grid.innerHTML='';
+      if(items.length===0){ grid.innerHTML = `<p class="muted">Nenhum resultado — ajuste os filtros.</p>`; return; }
+      items.forEach(d=>{
+        const el = document.createElement('div'); el.className='card';
+        el.innerHTML = `
+          <img src="${d.imagem||''}" alt="${d.nome}" onerror="this.src=''; this.style.background='#111'">
+          <div class="body">
+            <div class="title"><span>${d.nome}</span><span class="chip">Lv ${d.level}</span></div>
+            <div class="meta">
+              <span class="chip">Qtd ${d.quantidade}</span>
+              <span class="chip">R$ ${d.preco}</span>
+              ${d.macho?'<span class="chip">♂</span>':''}
+              ${d.femea?'<span class="chip">♀</span>':''}
+            </div>
+            <div class="actions">
+              <button class="btn secondary" onclick="editDino(${d.id})">Editar</button>
+              <button class="btn danger" onclick="deleteDino(${d.id})">Excluir</button>
+            </div>
+          </div>`;
+        grid.appendChild(el);
+      });
+    }
+
+    // ====== TABLE RENDER ======
+    function renderTable(){
+      const q = ($('#qTable').value||'').toLowerCase();
+      const sort = $('#sortTable').value;
+      let items = readAll().filter(x=>x.nome.toLowerCase().includes(q));
+      items.sort((a,b)=>{
+        const [field,dir] = sort.split('-');
+        const av = (field==='nome')? a.nome.toLowerCase() : a[field];
+        const bv = (field==='nome')? b.nome.toLowerCase() : b[field];
+        if(av<bv) return dir==='asc'?-1:1; if(av>bv) return dir==='asc'?1:-1; return 0;
+      });
+      const tbody = $('#tableBody'); tbody.innerHTML='';
+      if(items.length===0){ tbody.innerHTML = `<tr><td colspan="14" class="muted">Sem registros.</td></tr>`; return; }
+      items.forEach(d=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${d.nome}</td>
+          <td>${d.level}</td>
+          <td>${d.quantidade}</td>
+          <td>${d.preco}</td>
+          <td>${d.vida}</td>
+          <td>${d.estamina}</td>
+          <td>${d.peso}</td>
+          <td>${d.comida}</td>
+          <td>${d.oxigenio}</td>
+          <td>${d.dano}</td>
+          <td>${d.velocidade}</td>
+          <td>${d.macho?'Sim':'Não'}</td>
+          <td>${d.femea?'Sim':'Não'}</td>
+          <td>
+            <button class="btn secondary" onclick="editDino(${d.id})">Editar</button>
+            <button class="btn danger" onclick="deleteDino(${d.id})">Excluir</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    // window.editDino = function(id){ navTo('#/form'); fillForm(id); };
+      window.editDino = function(id){
+    // envia o id no hash; setupForm() lerá e fará fillForm(id)
+    navTo(`#/form?id=${id}`);
+  };
+  
+    window.deleteDino = function(id){
+      if(confirm('Tem certeza que deseja excluir?')){ remove(id); toast('Registro excluído.'); refreshAll(); }
+    };
+
+    // ====== FORM ======
+    function setupForm(){
+      $('#dinoForm').onsubmit = (e)=>{
+        e.preventDefault();
+        const d = collectForm();
+        const errs = validate(d);
+        if(errs.length){ alert('Corrija os campos:\n\n- '+errs.join('\n- ')); return; }
+        upsert(d); toast('Salvo com sucesso!'); navTo('#/table'); refreshAll();
+      };
+      $('#btnCancel').onclick = ()=> navTo('#/table');
+      const id = new URLSearchParams(location.hash.split('?')[1]).get('id');
+      if(id) fillForm(parseInt(id,10)); else clearForm();
+    }
+    function collectForm(){
+      return {
+        id: parseInt($('#id').value||'0',10) || undefined,
+        nome: $('#nome').value.trim(),
+        imagem: $('#imagem').value.trim(),
+        level: n('#level'), vida: n('#vida'), estamina: n('#estamina'), peso: n('#peso'), comida: n('#comida'), oxigenio: n('#oxigenio'), dano: n('#dano'), velocidade: n('#velocidade'), quantidade: n('#quantidade'), preco: n('#preco'),
+        macho: $('#macho').checked, femea: $('#femea').checked
+      };
+    }
+    function n(sel){ return Math.max(0, parseInt($(sel).value||'0',10)); }
+
+    function validate(d){
+      const e=[];
+      if(!d.nome) e.push('Nome é obrigatório');
+      ['level','quantidade','preco'].forEach(f=>{ if(!(d[f]||d[f]===0) || isNaN(d[f])) e.push(`${f} inválido`); });
+      return e;
+    }
+    function fillForm(id){
+      const d = findById(id); if(!d){ toast('Registro não encontrado'); return; }
+      $('#formTitle').textContent = 'Editar Dinossauro';
+      $('#id').value = d.id;
+      $('#nome').value = d.nome; $('#imagem').value = d.imagem||'';
+      setNum('#level',d.level); setNum('#quantidade',d.quantidade); setNum('#preco',d.preco);
+      setNum('#vida',d.vida); setNum('#estamina',d.estamina); setNum('#peso',d.peso); setNum('#comida',d.comida); setNum('#oxigenio',d.oxigenio); setNum('#dano',d.dano); setNum('#velocidade',d.velocidade);
+      $('#macho').checked = !!d.macho; $('#femea').checked = !!d.femea;
+    }
+    function clearForm(){ $('#formTitle').textContent='Novo Dinossauro'; $('#dinoForm').reset(); $('#id').value=''; ['#vida','#estamina','#peso','#comida','#oxigenio','#dano','#velocidade'].forEach(x=> setNum(x,0)); }
+    function setNum(sel,val){ $(sel).value = isNaN(val)?0:val; }
+
+    // ====== DASHBOARD ======
+    function renderDashboard(){
+      const all = readAll();
+      const totalEntidades = all.length;
+      const totalEstoque = all.reduce((s,x)=> s + (x.quantidade||0), 0);
+      const valorTotal = all.reduce((s,x)=> s + (x.quantidade||0)*(x.preco||0), 0);
+      const mediaLevel = totalEntidades? Math.round(all.reduce((s,x)=>s+(x.level||0),0)/totalEntidades) : 0;
+      const soMacho = all.filter(x => x.macho && !x.femea).map(x=>x.nome);
+      const soFemea = all.filter(x => x.femea && !x.macho).map(x=>x.nome);
+      const ambosSexos = all.filter(x => x.macho && x.femea).length;
+
+      const kpis = [
+        {lbl:'Total de entidades', val: totalEntidades},
+        {lbl:'Dinos em estoque (soma de quantidades)', val: totalEstoque},
+        {lbl:'Valor total em estoque', val: 'R$ '+valorTotal.toLocaleString('pt-BR')},
+        {lbl:'Level médio', val: mediaLevel},
+        {lbl:'Com ambos sexos', val: ambosSexos}
+      ];
+      const kpiGrid = $('#kpiGrid'); kpiGrid.innerHTML='';
+      kpis.forEach(k=>{
+        const el = document.createElement('div'); el.className='col-3';
+        el.innerHTML = `<div class="kpi"><div><div class="val">${k.val}</div><div class="lbl">${k.lbl}</div></div></div>`;
+        kpiGrid.appendChild(el);
+      });
+
+      const top = [...all].sort((a,b)=>(b.quantidade||0)-(a.quantidade||0)).slice(0,5);
+      const low = [...all].sort((a,b)=>(a.quantidade||0)-(b.quantidade||0)).slice(0,5);
+      $('#topEstoque').lastElementChild.innerHTML = listBlock(top);
+      $('#lowEstoque').lastElementChild.innerHTML = listBlock(low);
+      $('#onlyMacho').lastElementChild.innerHTML = pills(soMacho);
+      $('#onlyFemea').lastElementChild.innerHTML = pills(soFemea);
+    }
+    function listBlock(arr){
+      if(!arr.length) return '<div class="muted">—</div>';
+      return '<div class="grid">'+arr.map(x=>`<div class="col-12" style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.06)"><span>${x.nome}</span><span class="chip">Qtd ${x.quantidade}</span></div>`).join('')+'</div>';
+    }
+    function pills(list){
+      if(!list.length) return '<div class="muted">—</div>';
+      return '<div class="grid">'+list.map(n=>`<span class="chip" style="margin:4px">${n}</span>`).join('')+'</div>';
+    }
+
+    // ====== EXPORT/IMPORT/RESET ======
+    $('#btnExport').onclick = ()=>{
+      const blob = new Blob([JSON.stringify(readAll(),null,2)], {type:'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'dinos.json'; a.click(); URL.revokeObjectURL(a.href);
+    };
+    $('#btnImport').onclick = ()=> $('#importInput').click();
+    $('#importInput').onchange = async (e)=>{
+      const file = e.target.files[0]; if(!file) return;
+      const text = await file.text();
+      try{ const arr = JSON.parse(text); if(Array.isArray(arr)) { writeAll(arr); toast('Importado com sucesso!'); refreshAll(); } else alert('JSON inválido'); }
+      catch{ alert('Falha ao ler JSON.'); }
+      e.target.value='';
+    };
+    $('#btnReset').onclick = ()=>{
+      if(confirm('Limpar tudo do LocalStorage para este app?')){ localStorage.removeItem(LS_KEY); localStorage.removeItem(ID_KEY); toast('LocalStorage limpo.'); refreshAll(); }
+    };
+    $('#btnSeed').onclick = ()=>{ seed(); toast('Seed aplicado.'); refreshAll(); };
+
+    // ====== FILTERS & UI EVENTS ======
+    $('#qCards').addEventListener('input', debounce(renderCards, 150));
+    $('#minLevel').addEventListener('input', debounce(renderCards, 150));
+    $('#maxLevel').addEventListener('input', debounce(renderCards, 150));
+    $('#fltMacho').addEventListener('change', renderCards);
+    $('#fltFemea').addEventListener('change', renderCards);
+    $('#sortCards').addEventListener('change', renderCards);
+    $('#btnAddFromCards').onclick = ()=> navTo('#/form');
+
+    $('#qTable').addEventListener('input', debounce(renderTable, 150));
+    $('#sortTable').addEventListener('change', renderTable);
+    $('#btnAddFromTable').onclick = ()=> navTo('#/form');
+
+    // ====== HELPERS ======
+    function toast(msg){
+      const t = document.createElement('div');
+      t.textContent = msg; t.style.position='fixed'; t.style.bottom='20px'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.background='rgba(0,0,0,.8)'; t.style.color='white'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.zIndex='9999'; t.style.boxShadow='var(--shadow)';
+      document.body.appendChild(t); setTimeout(()=>{ t.remove(); }, 1800);
+    }
+    function debounce(fn,ms){ let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); }; }
+
+    function refreshAll(){
+      if(location.hash.startsWith('#/dashboard')) renderDashboard();
+      if(location.hash.startsWith('#/cards')) renderCards();
+      if(location.hash.startsWith('#/table')) renderTable();
+    }
+
+    // ====== INIT ======
+    // Se não existir dados, cria array vazio.
+    if(!localStorage.getItem(LS_KEY)) writeAll([]);
+    // Primeira navegação
+    navTo(location.hash || '#/dashboard');
+  </script>
+</body>
+</html>
