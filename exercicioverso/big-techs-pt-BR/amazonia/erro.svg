@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="576" viewBox="0 0 1024 576">
+  <defs>
+    <style>
+      .green-fill { fill:#165a3a; }
+      .green-line { stroke:#165a3a; stroke-width:14; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+      .txt { font-family:"Amazon Ember Modern","Amazon Ember",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; font-weight:800; }
+    </style>
+  </defs>
+
+  <!-- background -->
+  <rect width="1024" height="576" fill="#ffffff"/>
+
+  <!-- text -->
+  <text x="512" y="210" text-anchor="middle" class="green-fill txt" font-size="170" letter-spacing="1">
+    amazonia
+  </text>
+
+  <!-- CROCODILE -->
+  <g>
+    <!-- filled body -->
+    <path class="green-fill"
+      d="
+        M 260 370
+        Q 355 310 495 318
+        Q 610 325 705 338
+        Q 770 346 815 348
+        Q 860 350 900 332
+        Q 923 322 940 333
+        Q 962 348 944 368
+        Q 930 384 900 388
+        Q 842 395 775 392
+        Q 690 388 600 392
+        Q 505 396 420 408
+        Q 345 419 295 410
+        Q 248 401 235 384
+        Q 224 370 240 362
+        Q 250 357 260 370
+        Z
+      "/>
+
+    <!-- outline -->
+    <path class="green-line"
+      d="
+        M 260 370
+        Q 355 310 495 318
+        Q 610 325 705 338
+        Q 770 346 815 348
+        Q 860 350 900 332
+        Q 923 322 940 333
+        Q 962 348 944 368
+        Q 930 384 900 388
+        Q 842 395 775 392
+        Q 690 388 600 392
+        Q 505 396 420 408
+        Q 345 419 295 410
+        Q 248 401 235 384
+        Q 224 370 240 362
+        Q 250 357 260 370
+      "/>
+
+    <!-- back spikes -->
+    <path class="green-line"
+      d="
+        M 370 338
+        Q 395 324 420 338
+        Q 445 352 470 338
+        Q 495 324 520 338
+        Q 545 352 570 338
+        Q 595 324 620 338
+        Q 645 352 670 338
+        Q 690 328 710 338
+      "/>
+
+    <!-- tail tip -->
+    <path class="green-line"
+      d="M 268 372 Q 250 352 270 330"/>
+
+    <!-- head top -->
+    <path class="green-line"
+      d="M 740 336 Q 770 312 805 336"/>
+
+    <!-- eye -->
+    <circle cx="820" cy="346" r="6" fill="#ffffff"/>
