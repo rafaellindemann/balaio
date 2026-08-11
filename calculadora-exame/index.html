@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calculadora de Exame</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+            background:
+                radial-gradient(circle at top left, #eef4ff, transparent 40%),
+                radial-gradient(circle at bottom right, #f2edff, transparent 40%),
+                #f8f9fc;
+
+            color: #222;
+            padding: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(15px);
+
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 24px;
+
+            padding: 38px;
+
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.08);
+
+            animation: aparecer 0.7s ease;
+        }
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .descricao {
+            color: #777;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 28px;
+        }
+
+        .entrada {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex: 1;
+
+            padding: 15px 17px;
+
+            font-size: 16px;
+
+            border: 1px solid #ddd;
+            border-radius: 12px;
+
+            outline: none;
+
+            background: #fff;
+
+            transition:
+                border 0.25s ease,
+                box-shadow 0.25s ease,
+                transform 0.25s ease;
+        }
+
+        input:focus {
+            border-color: #7067e8;
+
+            box-shadow:
+                0 0 0 4px rgba(112, 103, 232, 0.12);
+
+            transform: translateY(-1px);
+        }
+
+        button {
+            border: none;
+            border-radius: 12px;
+
+            padding: 0 20px;
+
+            background: #7067e8;
+            color: white;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        button:hover {
+            background: #6259d8;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 20px rgba(112, 103, 232, 0.25);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .erro {
+            min-height: 20px;
+            margin-top: 8px;
+
+            color: #d84d4d;
+            font-size: 13px;
+
+            opacity: 0;
+
+            transition: opacity 0.3s ease;
+        }
+
+        .erro.visivel {
+            opacity: 1;
+        }
+
+        .resultado-atual {
+            margin-top: 20px;
+
+            padding: 20px;
+
+            background: #f6f5ff;
+
+            border: 1px solid #e5e2ff;
+            border-radius: 16px;
+
+            display: none;
+        }
+
+        .resultado-atual.mostrar {
+            display: block;
+            animation: resultadoEntrando 0.4s ease;
+        }
+
+        @keyframes resultadoEntrando {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .resultado-atual small {
+            color: #777;
+        }
+
+        .resultado-atual strong {
+            display: block;
+
+            margin-top: 5px;
+
+            font-size: 30px;
+            color: #6259d8;
+        }
+
+        .historico-container {
+            margin-top: 32px;
+        }
+
+        .historico-cabecalho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 12px;
+        }
+
+        .historico-cabecalho h2 {
+            font-size: 15px;
+            color: #555;
+        }
+
+        .limpar {
+            background: transparent;
+            color: #999;
+
+            padding: 6px 8px;
+
+            font-size: 12px;
+
+            box-shadow: none;
+        }
+
+        .limpar:hover {
+            background: #f2f2f2;
+            color: #444;
+
+            box-shadow: none;
+            transform: none;
+        }
+
+        #historico {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            max-height: 280px;
+            overflow-y: auto;
+
+            padding-right: 3px;
+        }
+
+        .registro {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 13px 15px;
+
+            background: #fafafa;
+
+            border: 1px solid #eee;
+            border-radius: 11px;
+
+            animation: registroEntrando 0.35s ease;
+        }
+
+        @keyframes registroEntrando {
+            from {
+                opacity: 0;
+                transform: translateX(-12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .registro .media {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .registro .nota {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .vazio {
+            color: #aaa;
+            font-size: 13px;
+
+            text-align: center;
+
+            padding: 20px;
+        }
+
+        @media (max-width: 550px) {
+
+            .container {
+                padding: 25px;
+            }
+
+            .entrada {
+                flex-direction: column;
+            }
+
+            button {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>Calculadora de Exame</h1>
+
+        <p class="descricao">
+            Informe sua média para descobrir quanto você precisa tirar no exame.
+        </p>
+
+
+        <div class="entrada">
+
+            <input
+                type="number"
+                id="media"
+                placeholder="Digite sua média"
+                step="0.01"
+                autofocus
+            >
+
+            <button id="btnCalcular">
+                Calcular
+            </button>
+
+        </div>
+
+
+        <div id="erro" class="erro"></div>
+
+
+        <section
+            id="resultadoAtual"
+            class="resultado-atual"
+        >
+
+            <small>
+                No exame, você precisa tirar:
+            </small>
+
+            <strong id="notaExame">
+                0.00
+            </strong>
+
+        </section>
+
+
+        <section class="historico-container">
+
+            <div class="historico-cabecalho">
+
+                <h2>Histórico de cálculos</h2>
+
+                <button
+                    id="btnLimpar"
+                    class="limpar"
+                >
+                    Limpar
+                </button>
+
+            </div>
+
+            <div id="historico">
+
+                <div
+                    id="historicoVazio"
+                    class="vazio"
+                >
+                    Nenhum cálculo realizado ainda.
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        const inputMedia =
+            document.querySelector("#media");
+
+        const btnCalcular =
+            document.querySelector("#btnCalcular");
+
+        const resultadoAtual =
+            document.querySelector("#resultadoAtual");
+
+        const notaExame =
+            document.querySelector("#notaExame");
+
+        const historico =
+            document.querySelector("#historico");
+
+        const historicoVazio =
+            document.querySelector("#historicoVazio");
+
+        const erro =
+            document.querySelector("#erro");
+
+        const btnLimpar =
+            document.querySelector("#btnLimpar");
+
+
+        function calcular() {
+
+            const mf =
+                parseFloat(inputMedia.value);
+
+
+            if (isNaN(mf)) {
+
+                mostrarErro(
+                    "Digite uma média válida."
+                );
+
+                inputMedia.focus();
+
+                return;
+            }
+
+
+            esconderErro();
+
+
+            const exame =
+                (25 - (mf * 3)) / 2;
+
+
+            notaExame.textContent =
+                exame.toFixed(2);
+
+
+            resultadoAtual.classList.remove(
+                "mostrar"
+            );
+
+
+            /*
+                Pequeno truque para reiniciar
+                a animação toda vez que
+                calcular novamente.
+            */
+
+            void resultadoAtual.offsetWidth;
+
+
+            resultadoAtual.classList.add(
+                "mostrar"
+            );
+
+
+            adicionarHistorico(
+                mf,
+                exame
+            );
+
+
+            inputMedia.value = "";
+
+            inputMedia.focus();
+        }
+
+
+        function adicionarHistorico(
+            media,
+            exame
+        ) {
+
+            historicoVazio.style.display =
+                "none";
+
+
+            const registro =
+                document.createElement("div");
+
+
+            registro.classList.add(
+                "registro"
+            );
+
+
+            registro.innerHTML = `
+
+                <span class="media">
+                    Média: ${media.toFixed(2)}
+                </span>
+
+                <span class="nota">
+                    Exame: ${exame.toFixed(2)}
+                </span>
+
+            `;
+
+
+            /*
+                Insere o cálculo mais recente
+                no começo do histórico.
+            */
+
+            historico.prepend(registro);
+
+        }
+
+
+        function mostrarErro(mensagem) {
+
+            erro.textContent =
+                mensagem;
+
+            erro.classList.add(
+                "visivel"
+            );
+
+        }
+
+
+        function esconderErro() {
+
+            erro.textContent = "";
+
+            erro.classList.remove(
+                "visivel"
+            );
+
+        }
+
+
+        function limparHistorico() {
+
+            historico.innerHTML = `
+
+                <div
+                    id="historicoVazio"
+                    class="vazio"
+                >
+                    Nenhum cálculo realizado ainda.
+                </div>
+
+            `;
+
+
+            resultadoAtual.classList.remove(
+                "mostrar"
+            );
+
+
+            /*
+                Como recriamos o elemento pelo
+                innerHTML, precisamos pegar
+                sua nova referência.
+            */
+
+            window.location.hash = "";
+
+            inputMedia.focus();
+        }
+
+
+        /*
+            Clique no botão
+        */
+
+        btnCalcular.addEventListener(
+            "click",
+            calcular
+        );
+
+
+        /*
+            Pressionar ENTER no input
+        */
+
+        inputMedia.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    calcular();
+
+                }
+
+            }
+        );
+
+
+        /*
+            Limpar histórico
+        */
+
+        btnLimpar.addEventListener(
+            "click",
+            limparHistorico
+        );
+
+    </script>
+
+</body>
+</html>
